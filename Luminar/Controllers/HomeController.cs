@@ -5,6 +5,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Luminar.Models;
+using NetJSON;
+using Newtonsoft.Json;
+using System.IO;
+using System.Collections;
 
 namespace Luminar.Controllers
 {
@@ -18,6 +22,15 @@ namespace Luminar.Controllers
         public IActionResult Nodo()
         {
             var nodos = GetNodos();
+            var nodosActivos = new List<NodoDto>();
+            var red = (Dictionary<string,object>)NetJSON.NetJSON.DeserializeObject(new StreamReader("wwwroot/Data/nodos.json").ReadToEnd());
+            var coleccion = (IEnumerable<dynamic>)red["collection"];
+            var nodosJson = coleccion.ToList().Where(x => x["topology_id"] == "ipv4_0").Select(x => x["nodes"]).ToList().FirstOrDefault();
+            var nodosIp = nodos.Select(x => x.Ip).ToList();
+            foreach (var nodo in nodosJson)
+            {
+                ActivarNodo(nodos, (string)nodo["label"]);
+            };
 
             ViewBag.Nodos = nodos;
 
@@ -37,6 +50,18 @@ namespace Luminar.Controllers
                 new NodoDto { Ip = "10.10.5.4", PosicionX = 50, PosicionY = 50 },
                 new NodoDto { Ip = "10.10.5.5", PosicionX = 100, PosicionY = 50 },
             };
+        }
+
+        private void ActivarNodo(IList<NodoDto> nodos,string nodoIp)
+        {
+            foreach(var nodo in nodos)
+            {
+                if (nodo.Ip == nodoIp)
+                {
+                    nodo.Activo = true;
+                }
+            };
+
         }
     }
 }
