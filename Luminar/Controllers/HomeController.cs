@@ -15,16 +15,11 @@ namespace Luminar.Controllers
             return View();
         }
 
-        public IActionResult About()
+        public IActionResult Nodo()
         {
-            ViewData["Message"] = "Your application description page.";
+            var nodos = GetNodos();
 
-            return View();
-        }
-
-        public IActionResult Contact()
-        {
-            ViewData["Message"] = "Your contact page.";
+            ViewBag.Nodos = nodos;
 
             return View();
         }
@@ -32,6 +27,16 @@ namespace Luminar.Controllers
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        }
+
+        private IList<NodoDto> GetNodos()
+        {
+            return new List<NodoDto> { new NodoDto { Ip = "10.10.5.1", PosicionX = 5, PosicionY = 5 },
+                new NodoDto { Ip = "10.10.5.2", PosicionX = 50, PosicionY = 5 },
+                new NodoDto { Ip = "10.10.5.3", PosicionX = 5, PosicionY = 50 },
+                new NodoDto { Ip = "10.10.5.4", PosicionX = 50, PosicionY = 50 },
+                new NodoDto { Ip = "10.10.5.5", PosicionX = 100, PosicionY = 50 },
+            };
         }
     }
 }

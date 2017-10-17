@@ -5,7 +5,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="wwwroot\Entidades\Nodo.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.All" Version="2.0.0" />
+    <PackageReference Include="NetJSON" Version="1.2.1.10" />
   </ItemGroup>
 
   <ItemGroup>

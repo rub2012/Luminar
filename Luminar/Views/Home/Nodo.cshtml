@@ -1,0 +1,30 @@
+﻿@{
+    ViewData["Title"] = "Nodos";
+    var nodos = (IList<NodoDto>)ViewBag.Nodos;
+}
+<div class="table-responsive">
+        <table id="nodos" class="table table-condensed table-bordered table-hover" style="width: auto;margin-top: 2%">
+            <tr class="info">
+                <th>IP</th>
+                <th>Estado</th>
+            </tr>
+            @foreach (NodoDto nodo in nodos)
+            {
+                <tr>
+                    <td style="text-align:center;">@nodo.Ip</td>
+                    <td style="text-align:center;"> 
+                        @{if (nodo.Activo)
+                            {
+                                <span class="glyphicon glyphicon-ok-circle" aria-hidden="true" style="color:green;"></span> 
+                            }
+                          else
+                            {
+                                <span class="glyphicon glyphicon-ban-circle" aria-hidden="true" style="color:red;"></span>
+                            }
+                        }
+                    </td>
+                </tr>
+                        }
+            
+        </table>
+</div>

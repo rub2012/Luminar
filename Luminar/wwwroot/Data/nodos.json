@@ -1,0 +1,255 @@
+﻿{
+  "type": "NetworkCollection",
+  "collection": [
+    {
+      "type": "NetworkGraph",
+      "protocol": "olsrv2",
+      "version": "0.14.1",
+      "revision": "v0.14.1-25-gd1134abc",
+      "router_id": "id_10.10.5.1",
+      "metric": "ff_dat_metric",
+      "topology_id": "ipv4_0",
+      "properties": {
+        "router_addr": "10.10.5.1",
+        "dualstack_id": "id_fe80::ba27:ebff:fe5b:68ec",
+        "dualstack_topology": "ipv6_0",
+        "dualstack_addr": "fe80::ba27:ebff:fe5b:68ec"
+      },
+      "nodes": [
+        {
+          "id": "id_10.10.5.1",
+          "label": "10.10.5.1",
+          "properties": {
+            "router_id": "id_10.10.5.1",
+            "router_addr": "10.10.5.1",
+            "dualstack_id": "id_fe80::ba27:ebff:fe5b:68ec",
+            "dualstack_addr": "fe80::ba27:ebff:fe5b:68ec",
+            "type": "local"
+          }
+        },
+        {
+          "id": "id_10.10.5.1_10.10.5.0/24",
+          "label": "10.10.5.1 - 10.10.5.0/24",
+          "properties": {
+            "router_id": "id_10.10.5.1",
+            "router_addr": "10.10.5.1",
+            "type": "lan"
+          }
+        },
+        {
+          "id": "id_10.10.5.2",
+          "label": "10.10.5.2",
+          "properties": {
+            "router_id": "id_10.10.5.2",
+            "router_addr": "10.10.5.2",
+            "dualstack_id": "id_fe80::ba27:ebff:fea0:b782",
+            "dualstack_addr": "fe80::ba27:ebff:fea0:b782",
+            "type": "node"
+          }
+        },
+        {
+          "id": "id_10.10.5.2_10.10.5.0/24",
+          "label": "10.10.5.2 - 10.10.5.0/24",
+          "properties": {
+            "router_id": "id_10.10.5.2",
+            "router_addr": "10.10.5.2",
+            "type": "attached"
+          }
+        }
+      ],
+      "links": [
+        {
+          "source": "id_10.10.5.1",
+          "target": "id_10.10.5.2",
+          "cost": 2170624,
+          "cost_text": "989bit/s",
+          "properties": {
+            "in_cost": 2105088,
+            "in_text": "1020bit/s",
+            "outgoing_tree": "true",
+            "source_addr": "10.10.5.1",
+            "target_addr": "10.10.5.2",
+            "type": "local",
+            "links": [
+              {
+                "interface": "wlan0",
+                "source_addr": "10.10.5.1",
+                "target_addr": "10.10.5.2",
+                "cost": 2170624,
+                "cost_text": "989bit/s",
+                "in_cost": 2105088,
+                "in_text": "1020bit/s",
+                "outgoing_tree": "true"
+              }
+            ]
+          }
+        },
+        {
+          "source": "id_10.10.5.2",
+          "target": "id_10.10.5.1",
+          "cost": 2105088,
+          "cost_text": "1020bit/s",
+          "properties": {
+            "in_cost": 2170624,
+            "in_text": "989bit/s",
+            "outgoing_tree": "false",
+            "source_addr": "10.10.5.2",
+            "target_addr": "10.10.5.1",
+            "type": "node"
+          }
+        },
+        {
+          "source": "id_10.10.5.1",
+          "target": "id_10.10.5.1_10.10.5.0/24",
+          "cost": 1,
+          "cost_text": "2Gbit/s",
+          "properties": {
+            "outgoing_tree": "true",
+            "source_addr": "10.10.5.1",
+            "target_addr": "10.10.5.0/24",
+            "hopcount": 2,
+            "type": "lan"
+          }
+        },
+        {
+          "source": "id_10.10.5.2",
+          "target": "id_10.10.5.2_10.10.5.0/24",
+          "cost": 1,
+          "cost_text": "2Gbit/s",
+          "properties": {
+            "outgoing_tree": "false",
+            "source_addr": "10.10.5.2",
+            "target_addr": "10.10.5.0/24",
+            "hopcount": 2,
+            "type": "attached"
+          }
+        }
+      ]
+    },
+    {
+      "type": "NetworkGraph",
+      "protocol": "olsrv2",
+      "version": "0.14.1",
+      "revision": "v0.14.1-25-gd1134abc",
+      "router_id": "id_fe80::ba27:ebff:fe5b:68ec",
+      "metric": "ff_dat_metric",
+      "topology_id": "ipv6_0",
+      "properties": {
+        "router_addr": "fe80::ba27:ebff:fe5b:68ec",
+        "dualstack_id": "id_10.10.5.1",
+        "dualstack_topology": "ipv4_0",
+        "dualstack_addr": "fe80::ba27:ebff:fe5b:68ec"
+      },
+      "nodes": [
+        {
+          "id": "id_fe80::ba27:ebff:fe5b:68ec",
+          "label": "fe80::ba27:ebff:fe5b:68ec",
+          "properties": {
+            "router_id": "id_fe80::ba27:ebff:fe5b:68ec",
+            "router_addr": "fe80::ba27:ebff:fe5b:68ec",
+            "dualstack_id": "id_10.10.5.1",
+            "dualstack_addr": "10.10.5.1",
+            "type": "local"
+          }
+        },
+        {
+          "id": "id_fe80::ba27:ebff:fe5b:68ec_fd00::/64",
+          "label": "fe80::ba27:ebff:fe5b:68ec - fd00::/64",
+          "properties": {
+            "router_id": "id_fe80::ba27:ebff:fe5b:68ec",
+            "router_addr": "fe80::ba27:ebff:fe5b:68ec",
+            "type": "lan"
+          }
+        },
+        {
+          "id": "id_fe80::ba27:ebff:fea0:b782",
+          "label": "fe80::ba27:ebff:fea0:b782",
+          "properties": {
+            "router_id": "id_fe80::ba27:ebff:fea0:b782",
+            "router_addr": "fe80::ba27:ebff:fea0:b782",
+            "dualstack_id": "id_10.10.5.2",
+            "dualstack_addr": "10.10.5.2",
+            "type": "node"
+          }
+        },
+        {
+          "id": "id_fe80::ba27:ebff:fea0:b782_fe80::/64",
+          "label": "fe80::ba27:ebff:fea0:b782 - fe80::/64",
+          "properties": {
+            "router_id": "id_fe80::ba27:ebff:fea0:b782",
+            "router_addr": "fe80::ba27:ebff:fea0:b782",
+            "type": "attached"
+          }
+        }
+      ],
+      "links": [
+        {
+          "source": "id_fe80::ba27:ebff:fe5b:68ec",
+          "target": "id_fe80::ba27:ebff:fea0:b782",
+          "cost": 2318080,
+          "cost_text": "926bit/s",
+          "properties": {
+            "in_cost": 2154240,
+            "in_text": "996bit/s",
+            "outgoing_tree": "false",
+            "source_addr": "fe80::ba27:ebff:fe5b:68ec",
+            "target_addr": "fe80::ba27:ebff:fea0:b782",
+            "type": "local",
+            "links": [
+              {
+                "interface": "wlan0",
+                "source_addr": "fe80::ba27:ebff:fe5b:68ec",
+                "target_addr": "fe80::ba27:ebff:fea0:b782",
+                "cost": 2318080,
+                "cost_text": "926bit/s",
+                "in_cost": 2154240,
+                "in_text": "996bit/s",
+                "outgoing_tree": "false"
+              }
+            ]
+          }
+        },
+        {
+          "source": "id_fe80::ba27:ebff:fea0:b782",
+          "target": "id_fe80::ba27:ebff:fe5b:68ec",
+          "cost": 2154240,
+          "cost_text": "996bit/s",
+          "properties": {
+            "in_cost": 2318080,
+            "in_text": "926bit/s",
+            "outgoing_tree": "false",
+            "source_addr": "fe80::ba27:ebff:fea0:b782",
+            "target_addr": "fe80::ba27:ebff:fe5b:68ec",
+            "type": "node"
+          }
+        },
+        {
+          "source": "id_fe80::ba27:ebff:fe5b:68ec",
+          "target": "id_fe80::ba27:ebff:fe5b:68ec_fd00::/64",
+          "cost": 1,
+          "cost_text": "2Gbit/s",
+          "properties": {
+            "outgoing_tree": "true",
+            "source_addr": "fe80::ba27:ebff:fe5b:68ec",
+            "target_addr": "fd00::/64",
+            "hopcount": 2,
+            "type": "lan"
+          }
+        },
+        {
+          "source": "id_fe80::ba27:ebff:fea0:b782",
+          "target": "id_fe80::ba27:ebff:fea0:b782_fe80::/64",
+          "cost": 1,
+          "cost_text": "2Gbit/s",
+          "properties": {
+            "outgoing_tree": "false",
+            "source_addr": "fe80::ba27:ebff:fea0:b782",
+            "target_addr": "fe80::/64",
+            "hopcount": 2,
+            "type": "attached"
+          }
+        }
+      ]
+    }
+  ]
+}
