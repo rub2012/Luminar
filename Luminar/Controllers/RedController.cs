@@ -12,7 +12,7 @@ namespace Luminar.Controllers
         }
         public IActionResult Index()
         {
-            Console.WriteLine(EjecutarComando("python3 /home/pi/scripts/leerEstadoLampara.py", "192.168.1.100",22,"pi","root"));
+            //Console.WriteLine(EjecutarComando("python3 /home/pi/scripts/leerEstadoLampara.py", "192.168.1.100",22,"pi","root"));
             return View("Grafico",null);
         }
 
