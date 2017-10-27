@@ -9,9 +9,9 @@ namespace Luminar.Models
     public class NodoDto
     {
         public int Id { get; set; }
-        public int PosicionX { get; set; }
-        public int PosicionY { get; set; }
-        public IList<NodoDto> Vecinos { get; set; }
+        public decimal Latitud { get; set; }
+        public decimal Longitud { get; set; }
+        public IList<EnlaceDto> Vecinos { get; set; }
         public bool Activo { get; set; }
         public string Ip { get; set; }
     }

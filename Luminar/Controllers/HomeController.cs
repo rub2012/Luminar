@@ -22,15 +22,34 @@ namespace Luminar.Controllers
         public IActionResult Nodo()
         {
             var nodos = GetNodos();
-            var nodosActivos = new List<NodoDto>();
+            var nodosActivos = new List<EnlaceDto>();
             var red = (Dictionary<string,object>)NetJSON.NetJSON.DeserializeObject(new StreamReader("wwwroot/Data/nodos.json").ReadToEnd());
-            var coleccion = (IEnumerable<dynamic>)red["collection"];
-            var nodosJson = coleccion.ToList().Where(x => x["topology_id"] == "ipv4_0").Select(x => x["nodes"]).ToList().FirstOrDefault();
+            var coleccion = (IList<dynamic>)red["collection"];
+            var nodosJson = (IList<dynamic>)coleccion.Where(x => x["topology_id"] == "ipv4_0").Select(x => x["nodes"]).FirstOrDefault();
+            nodosJson = nodosJson.Where(x => (x["properties"]["type"] == "local" || x["properties"]["type"] == "node")).ToList();
+            var enlacesJson = (IList<dynamic>)coleccion.Where(x => x["topology_id"] == "ipv4_0").Select(x => x["links"]).FirstOrDefault();
+            enlacesJson = enlacesJson.Where(x => (x["properties"]["type"] == "local" || x["properties"]["type"] == "node")).ToList();
             var nodosIp = nodos.Select(x => x.Ip).ToList();
+
             foreach (var nodo in nodosJson)
             {
                 ActivarNodo(nodos, (string)nodo["label"]);
             };
+
+            foreach (var nodo in nodos)
+            {
+                var enlacesDelNodo = enlacesJson.Where(x => x["properties"]["source_addr"] == nodo.Ip).ToList();
+                nodo.Vecinos = new List<EnlaceDto>();
+                foreach (var enlace in enlacesDelNodo)
+                {
+                    nodo.Vecinos.Add(new EnlaceDto
+                    {
+                        Destino = enlace["properties"]["target_addr"],
+                        Costo = enlace["cost"]
+                    });
+                }
+
+            }
 
             ViewBag.Nodos = nodos;
 
@@ -44,11 +63,11 @@ namespace Luminar.Controllers
 
         private IList<NodoDto> GetNodos()
         {
-            return new List<NodoDto> { new NodoDto { Ip = "10.10.5.1", PosicionX = 5, PosicionY = 5 },
-                new NodoDto { Ip = "10.10.5.2", PosicionX = 50, PosicionY = 5 },
-                new NodoDto { Ip = "10.10.5.3", PosicionX = 5, PosicionY = 50 },
-                new NodoDto { Ip = "10.10.5.4", PosicionX = 50, PosicionY = 50 },
-                new NodoDto { Ip = "10.10.5.5", PosicionX = 100, PosicionY = 50 },
+            return new List<NodoDto> { new NodoDto { Ip = "10.10.5.1", Latitud = -34.522372m, Longitud = -58.701958m },
+                new NodoDto { Ip = "10.10.5.2", Latitud = -34.521736m, Longitud = -58.701305m },
+                new NodoDto { Ip = "10.10.5.3", Latitud = -34.521391m, Longitud = -58.703140m },
+                new NodoDto { Ip = "10.10.5.4", Latitud = -34.520759m, Longitud = -58.702437m },
+                new NodoDto { Ip = "10.10.5.5", Latitud = -34.520140m, Longitud = -58.701707m },
             };
         }
 
@@ -63,5 +82,17 @@ namespace Luminar.Controllers
             };
 
         }
+
+        //private void Enlazar(NodoDto nodo, string nodoIp)
+        //{
+        //    foreach (var nodo in nodos)
+        //    {
+        //        if (nodo.Ip == nodoIp)
+        //        {
+        //            nodo.Activo = true;
+        //        }
+        //    };
+
+        //}
     }
 }
