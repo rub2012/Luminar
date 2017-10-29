@@ -3,10 +3,36 @@
 }
 @Html.Hidden("urlNodosJson",Url.Action("NodosJson", "Home"))
 
+<style type="text/css">
+    #map {
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        padding: 0;
+        position: inherit;
+    }
+
+    .nodos, .nodos svg {
+        position: inherit;
+    }
+
+        .nodos svg {
+            width: 60px;
+            height: 20px;
+            padding-right: 100px;
+            font: 10px sans-serif;
+        }
+
+        .nodos circle {
+            fill: green;
+            stroke: black;
+            stroke-width: 1px;
+        }
+</style>
 <script type="text/javascript" src="~/lib/d3/d3.js"></script>
 <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAopKI7FVTbOjblTHkpSWGhrg6o4dpyd_Y"></script>
 <script type="text/javascript" src="~/js/grafico.js" asp-append-version="true"></script>
 
 
 
-<div id="map"></div>
+<div id="map" style="width: 960px; height: 500px;"></div>

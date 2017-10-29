@@ -9,7 +9,8 @@ namespace Luminar.Models
     public class EnlaceDto
     {
         public int Costo { get; set; }
-        public string Destino { get; set; }
+        public decimal Latitud { get; set; }
+        public decimal Longitud { get; set; }
 
     }
 }

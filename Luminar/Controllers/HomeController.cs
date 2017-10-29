@@ -77,14 +77,21 @@ namespace Luminar.Controllers
                 nodo.Vecinos = new List<EnlaceDto>();
                 foreach (var enlace in enlacesDelNodo)
                 {
+                    NodoDto nodoEnlace = ObtenerNodoPorIp(nodos, enlace["properties"]["target_addr"]);
                     nodo.Vecinos.Add(new EnlaceDto
                     {
-                        Destino = enlace["properties"]["target_addr"],
+                        Latitud = nodoEnlace.Latitud,
+                        Longitud = nodoEnlace.Longitud,
                         Costo = enlace["cost"]
                     });
                 }
             }
             return nodos;
+        }
+
+        private NodoDto ObtenerNodoPorIp(IList<NodoDto> nodos, string ip)
+        {
+            return nodos.Where(x => x.Ip == ip).FirstOrDefault();
         }
     
         [HttpGet]
