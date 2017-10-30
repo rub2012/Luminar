@@ -28,15 +28,31 @@
                     .each(transform)
                     .enter().append("svg")
                     .each(transform)
-                    .attr("class", "marker");
+                    .attr("class", "marker")
+                    .style("width", "100px")
+                    .style("height", "100px")
+                    //.attr("overflow", "visible");
 
                 function transform(nodo) {
                     nodo = new google.maps.LatLng(nodo.latitud, nodo.longitud);
                     nodo = projection.fromLatLngToDivPixel(nodo);
                     return d3.select(this)
-                        .style("left", (nodo.x - padding) + "px")
-                        .style("top", (nodo.y - padding) + "px")
+                        .style("left", (nodo.x - padding -5) + "px")
+                        .style("top", (nodo.y - padding - 5) + "px");
                 };
+
+                function armarPath(enlace) {
+                    return d3.select(this)
+                        .append("path")
+                        .attr("d", function () {
+                            var origen = transformLatLng(enlace.latitudOrigen, enlace.longitudOrigen);
+                            var destino = transformLatLng(enlace.latitudDestino, enlace.longitudDestino);
+                            return " M " + origen.x + " " + origen.y + " L " + destino.x + " " + destino.y;
+                        })
+                        .attr("stroke", "blue")
+                        .attr("stroke-width", 2)
+                        .attr("fill", "none");
+                }
 
                 function transformLatLng(latitud, longitud) {
                     var nodo = new google.maps.LatLng(latitud, longitud);
@@ -51,9 +67,10 @@
 
                 // Add a label.
                 marker.append("text")
-                    .attr("x", padding + 7)
+                    .attr("x", padding + 7) //padding + 7
                     .attr("y", padding)
                     .attr("dy", ".31em")
+                    .style("fill", "blue")
                     .text(function (d) { return d.ip; });
 
                 //var edges = layer.selectAll("path")
@@ -75,15 +92,15 @@
                 //    })
                     //.style("pointer-events", "none");
 
-                var edges = layer.selectAll("path")
-                    .data(Enlaces(nodos))
-                    .enter().append("svg:svg").attr("width", "100%").attr("width", "100%").style("position", "absolute")
-                    .append("svg:path")
-                    .attr("d", function (d) {
-                        var e = transform_path(d)
-                        var p = 'M' + e.join('L') + 'Z'
-                        return p
-                    }).attr("fill", "none").attr("stroke", "black");
+                //var edges = layer.selectAll("svg")
+                //    .data(Enlaces(nodos))
+                //    .enter().append("svg").attr("width", "100%").attr("width", "100%").style("position", "absolute")
+                //    .append("svg:path")
+                //    .attr("d", function (d) {
+                //        var e = transform_path(d)
+                //        var p = 'M' + e.join('L') + 'Z'
+                //        return p
+                //    }).attr("fill", "none").attr("stroke", "black");
 
                 //function transform_path(vecino) {
                 //    var d = [];
@@ -93,6 +110,64 @@
                 //    }
                 //    return d;
                 //}
+
+                //var svgContainer = layer.selectAll("svg")
+                //    .enter().append("svg").attr("width", "100%").attr("width", "100%").style("position", "absolute");
+
+                //$.each(Enlaces(nodos), function (indice, enlace) {
+                //    var lineGraph = svgContainer.append("path")
+                //        .attr("d", function() {
+                //            var origen = transformLatLng(enlace.latitudOrigen, enlace.longitudOrigen);
+                //            var destino = transformLatLng(enlace.latitudDestino, enlace.longitudDestino);
+                //                return " M " + origen.x + " " + origen.y + " L " + destino.x + " " + destino.y;
+                //            })
+                //        .attr("stroke", "blue")
+                //        .attr("stroke-width", 2)
+                //        .attr("fill", "none");
+                //});
+
+                //var edge = layer.selectAll("svg")
+                //    .data(Enlaces(nodos))
+                //    .each(armarPath)
+                //    .enter().append("svg")
+                //    .each(armarPath);
+
+
+                //var edge = layer.selectAll("svg")
+                //    .data(Enlaces(nodos))
+                //    //.each(transform)
+                //    .enter().append("svg").attr("width", "100%").attr("width", "100%").style("position", "absolute")
+                //    .each(function (d) {
+                //        d3.select(this)
+                //            .enter()
+                //            .append("path")
+                //            .attr("class", "path")
+                //            .attr("stroke", "black")
+                //            .attr("stroke-width", 1)
+                //            .attr("opacity", 0.8)
+                //            //.style('fill', color(i))
+                //            .attr("d", function() {
+                //                    var origen = transformLatLng(d.latitudOrigen, d.longitudOrigen);
+                //                    var destino = transformLatLng(d.latitudDestino, d.longitudDestino);
+                //                    return " M " + origen.x +" "+ origen.y+ " L " + destino.x + " "+ destino.y;
+                //                }
+                //            );
+                //    });
+
+                $.each(Enlaces(nodos), function (indice, enlace) {
+                    var line = new google.maps.Polyline({
+                        path: [
+                            new google.maps.LatLng(enlace.latitudOrigen, enlace.longitudOrigen),
+                            new google.maps.LatLng(enlace.latitudDestino, enlace.longitudDestino)
+                        ],
+                        strokeColor: "red",
+                        strokeOpacity: 0.7,
+                        strokeWeight: 1,
+                        map: map
+                    });
+                });
+
+                
             };
         };
         overlay.setMap(map);
