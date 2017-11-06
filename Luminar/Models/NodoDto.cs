@@ -13,6 +13,7 @@ namespace Luminar.Models
         public decimal Longitud { get; set; }
         public IList<EnlaceDto> Vecinos { get; set; }
         public bool Activo { get; set; }
+        public bool Encendido { get; set; }
         public string Ip { get; set; }
     }
 }

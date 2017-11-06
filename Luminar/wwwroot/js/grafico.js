@@ -1,4 +1,15 @@
 ﻿$(document).ready(function () {
+    $.blockUI.defaults.css = {
+        padding: 0,
+        margin: 0,
+        textAlign: 'center',        
+        //backgroundColor: '#fff',
+        top: '50%',
+        left: '50%',
+        color: '#000',
+        cursor: 'wait'
+    };
+    $.blockUI({ message: $("#spinner")});
     $.getJSON($("#urlNodosJson").val(), function (data) {
         //d3.selectAll("#map").attr("width", width - 200);
         var nodos = data;
@@ -34,11 +45,13 @@
                     //.attr("overflow", "visible");
 
                 function transform(nodo) {
-                    nodo = new google.maps.LatLng(nodo.latitud, nodo.longitud);
-                    nodo = projection.fromLatLngToDivPixel(nodo);
+                    var nodoXY = new google.maps.LatLng(nodo.latitud, nodo.longitud);
+                    nodoXY = projection.fromLatLngToDivPixel(nodoXY);
                     return d3.select(this)
-                        .style("left", (nodo.x - padding -5) + "px")
-                        .style("top", (nodo.y - padding - 5) + "px");
+                        .style("left", (nodoXY.x - padding -5) + "px")
+                        .style("top", (nodoXY.y - padding - 5) + "px")
+                        .attr("id", nodo.ip)
+                        .attr("fill", setColor(nodo));
                 };
 
                 function armarPath(enlace) {
@@ -52,6 +65,18 @@
                         .attr("stroke", "blue")
                         .attr("stroke-width", 2)
                         .attr("fill", "none");
+                }
+
+                function setColor(nodo) {
+                    if (nodo.activo && nodo.encendido) {
+                        return "green";
+                    }
+                    else if (nodo.activo) {
+                        return "yellow";
+                    }
+                    else {
+                        return "red";
+                    }
                 }
 
                 function transformLatLng(latitud, longitud) {
@@ -174,6 +199,8 @@
         //$("#map").attr("style", "position: inherit");
         
 
+    }).done(function() {
+        $.unblockUI();
     });
 
 

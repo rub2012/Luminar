@@ -9,6 +9,7 @@ using NetJSON;
 using Newtonsoft.Json;
 using System.IO;
 using System.Collections;
+using Renci.SshNet;
 
 namespace Luminar.Controllers
 {
@@ -41,18 +42,6 @@ namespace Luminar.Controllers
                 new NodoDto { Ip = "10.10.5.4", Latitud = -34.520759m, Longitud = -58.702437m },
                 new NodoDto { Ip = "10.10.5.5", Latitud = -34.520140m, Longitud = -58.701707m },
             };
-        }
-
-        private void ActivarNodo(IList<NodoDto> nodos,string nodoIp)
-        {
-            foreach(var nodo in nodos)
-            {
-                if (nodo.Ip == nodoIp)
-                {
-                    nodo.Activo = true;
-                }
-            };
-
         }
 
         private IList<NodoDto> ObtenerNodos()
@@ -100,6 +89,42 @@ namespace Luminar.Controllers
             var nodos = ObtenerNodos();
 
             return Json(nodos);
+        }
+
+        private void ActivarNodo(IList<NodoDto> nodos, string nodoIp)
+        {
+            foreach (var nodo in nodos)
+            {
+                if (nodo.Ip == nodoIp)
+                {
+                    nodo.Activo = true;
+                    nodo.Encendido = LeerEstadoLuz(nodo.Ip);
+                }                
+            };
+
+        }
+
+        private bool LeerEstadoLuz(string ip)
+        {
+            try
+            {
+                return EjecutarComando("python3 /home/pi/scripts/leerEstadoLampara.py", ip, 22, "pi", "root") == "1";
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        private string EjecutarComando(string comando, string host, int port, string user, string password)
+        {
+            using (var client = new SshClient(host, port, user, password))
+            {
+                client.Connect();
+                var output = client.RunCommand(comando);
+                client.Disconnect();
+                return output.Result;
+            }
         }
     }
 }
