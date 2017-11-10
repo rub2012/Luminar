@@ -1,14 +1,16 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Luminar.Business;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using Renci.SshNet;
-using System;
 
 namespace Luminar.Controllers
 {
     public class RedController : Controller
     {
-        public RedController()
+        private readonly IHubContext<Notificacion> _hubcontext;
+        public RedController(IHubContext<Notificacion> hub)
         {
-
+            _hubcontext = hub;
         }
         public IActionResult Index()
         {
@@ -25,6 +27,15 @@ namespace Luminar.Controllers
                 client.Disconnect();
                 return output.Result;
             }
+        }
+
+        [HttpGet]
+        public IActionResult Send(string mensaje)
+        {
+            //for everyone
+            this._hubcontext.Clients.All.InvokeAsync("Send", mensaje);
+
+            return this.Ok();
         }
     }
 }

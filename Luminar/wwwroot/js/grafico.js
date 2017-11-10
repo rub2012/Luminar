@@ -1,4 +1,5 @@
 ﻿$(document).ready(function () {
+    IniciarSignalR();
     $.blockUI.defaults.css = {
         padding: 0,
         margin: 0,
@@ -54,19 +55,6 @@
                         .attr("fill", setColor(nodo));
                 };
 
-                function armarPath(enlace) {
-                    return d3.select(this)
-                        .append("path")
-                        .attr("d", function () {
-                            var origen = transformLatLng(enlace.latitudOrigen, enlace.longitudOrigen);
-                            var destino = transformLatLng(enlace.latitudDestino, enlace.longitudDestino);
-                            return " M " + origen.x + " " + origen.y + " L " + destino.x + " " + destino.y;
-                        })
-                        .attr("stroke", "blue")
-                        .attr("stroke-width", 2)
-                        .attr("fill", "none");
-                }
-
                 function setColor(nodo) {
                     if (nodo.activo && nodo.encendido) {
                         return "green";
@@ -79,12 +67,6 @@
                     }
                 }
 
-                function transformLatLng(latitud, longitud) {
-                    var nodo = new google.maps.LatLng(latitud, longitud);
-                    nodo = projection.fromLatLngToDivPixel(nodo);
-                    return { x: nodo.x - padding, y: nodo.y - padding }
-                };
-
                 marker.append("circle")
                     .attr("r", 5)
                     .attr("cx", padding + 5)
@@ -96,88 +78,7 @@
                     .attr("y", padding)
                     .attr("dy", ".31em")
                     .style("fill", "blue")
-                    .text(function (d) { return d.ip; });
-
-                //var edges = layer.selectAll("path")
-                //    .data(Enlaces(nodos))
-                //    .enter().append("svg:svg").attr("width", "100%").attr("width", "100%").style("position", "absolute")
-                //    .append('svg:path')
-                //    .attr({
-                //        'd': function (d) {
-                //            var origen = transformLatLng(d.latitudOrigen, d.longitudOrigen);
-                //            var destino = transformLatLng(d.latitudDestino, d.longitudDestino);
-                //            return 'M ' + origen.x + ',' + origen.y + ' L ' + destino.x + ',' + destino.y
-                //        },
-                //        'class': 'edge',
-                //        'fill-opacity': 0,
-                //        'stroke-opacity': 0,
-                //        'fill': 'blue',
-                //        'stroke': 'red',
-                //        'id': function (d, i) { return 'edge' + i }
-                //    })
-                    //.style("pointer-events", "none");
-
-                //var edges = layer.selectAll("svg")
-                //    .data(Enlaces(nodos))
-                //    .enter().append("svg").attr("width", "100%").attr("width", "100%").style("position", "absolute")
-                //    .append("svg:path")
-                //    .attr("d", function (d) {
-                //        var e = transform_path(d)
-                //        var p = 'M' + e.join('L') + 'Z'
-                //        return p
-                //    }).attr("fill", "none").attr("stroke", "black");
-
-                //function transform_path(vecino) {
-                //    var d = [];
-                //    for (var i = 0; i < vecino.length; i++) {
-                //        var c = transform(vecino);
-                //        d.push(c);
-                //    }
-                //    return d;
-                //}
-
-                //var svgContainer = layer.selectAll("svg")
-                //    .enter().append("svg").attr("width", "100%").attr("width", "100%").style("position", "absolute");
-
-                //$.each(Enlaces(nodos), function (indice, enlace) {
-                //    var lineGraph = svgContainer.append("path")
-                //        .attr("d", function() {
-                //            var origen = transformLatLng(enlace.latitudOrigen, enlace.longitudOrigen);
-                //            var destino = transformLatLng(enlace.latitudDestino, enlace.longitudDestino);
-                //                return " M " + origen.x + " " + origen.y + " L " + destino.x + " " + destino.y;
-                //            })
-                //        .attr("stroke", "blue")
-                //        .attr("stroke-width", 2)
-                //        .attr("fill", "none");
-                //});
-
-                //var edge = layer.selectAll("svg")
-                //    .data(Enlaces(nodos))
-                //    .each(armarPath)
-                //    .enter().append("svg")
-                //    .each(armarPath);
-
-
-                //var edge = layer.selectAll("svg")
-                //    .data(Enlaces(nodos))
-                //    //.each(transform)
-                //    .enter().append("svg").attr("width", "100%").attr("width", "100%").style("position", "absolute")
-                //    .each(function (d) {
-                //        d3.select(this)
-                //            .enter()
-                //            .append("path")
-                //            .attr("class", "path")
-                //            .attr("stroke", "black")
-                //            .attr("stroke-width", 1)
-                //            .attr("opacity", 0.8)
-                //            //.style('fill', color(i))
-                //            .attr("d", function() {
-                //                    var origen = transformLatLng(d.latitudOrigen, d.longitudOrigen);
-                //                    var destino = transformLatLng(d.latitudDestino, d.longitudDestino);
-                //                    return " M " + origen.x +" "+ origen.y+ " L " + destino.x + " "+ destino.y;
-                //                }
-                //            );
-                //    });
+                    .text(function (d) { return d.ip; });                
 
                 $.each(Enlaces(nodos), function (indice, enlace) {
                     var line = new google.maps.Polyline({
@@ -188,7 +89,8 @@
                         strokeColor: "red",
                         strokeOpacity: 0.7,
                         strokeWeight: 1,
-                        map: map
+                        map: map,
+                        //id: enlace.id
                     });
                 });
 
@@ -235,9 +137,34 @@ function Enlaces(nodos) {
                 longitudOrigen: nodo.longitud,
                 latitudDestino: vecino.latitud,
                 longitudDestino: vecino.longitud,
-                costo: vecino.costo
+                costo: vecino.costo,
+                id: nodo.ip +"-"+vecino.ip
             });
         });        
     });
     return enlaces;
+}
+
+function IniciarSignalR()
+{
+    //var transportType = signalR.TransportType.WebSockets;
+    //can also be ServerSentEvents or LongPolling
+    //var logger = new signalR.ConsoleLogger(signalR.LogLevel.Information);
+    //var chatHub = new signalR.HttpConnection(`http://${document.location.host}/chat`, { transport: transportType, logger: logger });
+
+    var notificador = new signalR.HubConnection("/notificacion");
+
+    notificador.onClosed = e => {
+        console.log('connection closed');
+    };
+
+    //Metodo llamado desde el hub Notificacion a traves del controller
+    notificador.on('Send', (message) => {
+        console.log('Mensaje recibido: '+ message);
+    });
+    
+    notificador.start().catch(err => {
+        console.log('connection error');
+    });
+
 }
