@@ -54,10 +54,10 @@
     <div class="container body-content">
         @RenderBody()
         <hr />
-        <footer>
-            <p>&copy; 2017 - Luminar</p>
-        </footer>
     </div>
     @RenderSection("Scripts", required: false)
+    <div id="spinner" style="display:none;">
+        <i class="fa fa-spinner fa-spin" style="font-size:48px;color:blue"></i>
+    </div>
 </body>
 </html>

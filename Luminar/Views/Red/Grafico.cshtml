@@ -1,7 +1,7 @@
 ﻿@{
     ViewData["Title"] = "Gráfico de Red";
 }
-@Html.Hidden("urlNodosJson",Url.Action("NodosJson", "Home"))
+@Html.Hidden("urlNodosJson", Url.Action("NodosJson", "Home"))
 
 <style type="text/css">
     #map {
@@ -17,13 +17,18 @@
         overflow: visible;
     }
 
+        .enlaces, .enlaces svg {
+            position: inherit;
+            overflow: visible;
+        }
+
         .nodos svg {
             width: 70px;
             height: 30px;
             padding-right: 100px;
             font: 12px sans-serif;
-            margin:0px;
-            padding:0px;
+            margin: 0px;
+            padding: 0px;
         }
 
         .nodos circle {
@@ -31,8 +36,6 @@
             stroke: black;
             stroke-width: 1px;
         }
-
-
 </style>
 <script type="text/javascript" src="~/lib/signalr/signalr-client.js"></script>
 <script type="text/javascript" src="~/lib/d3/d3.js"></script>
@@ -43,9 +46,23 @@
 
 
 
-<div id="map" style="width: 960px; height: 500px;"></div>
+<div id="map" style="width: 930px; height: 500px; float:left;"></div>
 
+<div class="panel-group" id="accordion" style="float:right;">
+    <div class="panel panel-default" id="panel1">
+        <div class="panel-heading">
+            <h4 class="panel-title">
+                <a data-toggle="collapse" data-target="#collapseOne">
+                    Notificaciones
+                </a>
+            </h4>
 
-<div id="spinner" style="display:none;">
-    <i class="fa fa-spinner fa-spin" style="font-size:48px;color:blue"></i>
+        </div>
+        <div id="collapseOne" class="panel-collapse collapse in">
+            <div class="panel-body">
+                <ul class ="notificacion-panel" style="height: 200px; overflow: auto">
+                </ul>
+            </div>
+        </div>
+    </div>
 </div>

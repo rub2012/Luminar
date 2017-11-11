@@ -71,7 +71,8 @@ namespace Luminar.Controllers
                     {
                         Latitud = nodoEnlace.Latitud,
                         Longitud = nodoEnlace.Longitud,
-                        Costo = enlace["cost"]
+                        Costo = enlace["cost"],
+                        Ip = nodoEnlace.Ip
                     });
                 }
             }
@@ -108,7 +109,8 @@ namespace Luminar.Controllers
         {
             try
             {
-                return EjecutarComando("python3 /home/pi/scripts/leerEstadoLampara.py", ip, 22, "pi", "root") == "1";
+                //return EjecutarComando("python3 /home/pi/scripts/leerEstadoLampara.py", ip, 22, "pi", "root") == "1";
+                return true;
             }
             catch (Exception)
             {

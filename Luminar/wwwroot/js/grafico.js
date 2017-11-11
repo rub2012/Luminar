@@ -30,12 +30,43 @@
 
         var overlay = new google.maps.OverlayView();
         overlay.onAdd = function(){
-            var layer = d3.select(this.getPanes().overlayLayer).append("div").attr("class", "nodos");
+            
+            var layerEnlaces = d3.select(this.getPanes().overlayLayer).append("div").attr("class", "enlaces");
+            var layerNodos = d3.select(this.getPanes().overlayMouseTarget).append("div").attr("class", "nodos");
 
             overlay.draw = function () {
                 var projection = this.getProjection(), padding = 10;
 
-                var marker = layer.selectAll("svg")
+                var enlaces = layerEnlaces.selectAll("svg")
+                    .data(Enlaces(nodos))
+                    .each(transformEnlaces)
+                    .enter().append("svg")
+                    .each(transformEnlaces)
+                    //.attr("class", "enlace")
+                    .style("width", "100px")
+                    .style("height", "100px");
+
+                function transformEnlaces(enlace) {
+                    var origen = new google.maps.LatLng(enlace.latitudOrigen, enlace.longitudOrigen);
+                    origen = projection.fromLatLngToDivPixel(origen);
+                    var destino = new google.maps.LatLng(enlace.latitudDestino, enlace.longitudDestino);
+                    destino = projection.fromLatLngToDivPixel(destino);
+                    var svg = d3.select(this);
+                    svg.selectAll("*").remove();
+                    svg
+                        .append("line")
+                        .attr("x1", origen.x)
+                        .attr("y1", origen.y)
+                        .attr("x2", destino.x)
+                        .attr("y2", destino.y)
+                        .attr("stroke-width", 1)
+                        .attr("stroke-opacity", 0.7)
+                        .attr("stroke", "black")
+                        .attr("id", enlace.id);
+                    return svg;
+                };
+
+                var marker = layerNodos.selectAll("svg")
                     .data(nodos)
                     .each(transform)
                     .enter().append("svg")
@@ -48,52 +79,30 @@
                 function transform(nodo) {
                     var nodoXY = new google.maps.LatLng(nodo.latitud, nodo.longitud);
                     nodoXY = projection.fromLatLngToDivPixel(nodoXY);
-                    return d3.select(this)
-                        .style("left", (nodoXY.x - padding -5) + "px")
-                        .style("top", (nodoXY.y - padding - 5) + "px")
-                        .attr("id", nodo.ip)
-                        .attr("fill", setColor(nodo));
-                };
-
-                function setColor(nodo) {
-                    if (nodo.activo && nodo.encendido) {
-                        return "green";
-                    }
-                    else if (nodo.activo) {
-                        return "yellow";
-                    }
-                    else {
-                        return "red";
-                    }
-                }
-
-                marker.append("circle")
-                    .attr("r", 5)
-                    .attr("cx", padding + 5)
-                    .attr("cy", padding + 5);
-
-                // Add a label.
-                marker.append("text")
-                    .attr("x", padding + 7) //padding + 7
-                    .attr("y", padding)
-                    .attr("dy", ".31em")
-                    .style("fill", "blue")
-                    .text(function (d) { return d.ip; });                
-
-                $.each(Enlaces(nodos), function (indice, enlace) {
-                    var line = new google.maps.Polyline({
-                        path: [
-                            new google.maps.LatLng(enlace.latitudOrigen, enlace.longitudOrigen),
-                            new google.maps.LatLng(enlace.latitudDestino, enlace.longitudDestino)
-                        ],
-                        strokeColor: "red",
-                        strokeOpacity: 0.7,
-                        strokeWeight: 1,
-                        map: map,
-                        //id: enlace.id
-                    });
-                });
-
+                    var svg = d3.select(this);
+                    svg.selectAll("*").remove();
+                    svg
+                        .style("left", (nodoXY.x - padding - 5) + "px")
+                        .style("top", (nodoXY.y - padding - 5) + "px")                        
+                        .append("circle")
+                        .attr("id", "id"+nodo.ip)
+                        .attr("fill", setColor(nodo))
+                        //.style("fill", setColor(nodo))
+                        .attr("r", 5)
+                        .attr("cx", padding + 5)
+                        .attr("cy", padding + 5)
+                        .on("click", function (d,i) {
+                            console.log("marker clickeado");
+                        });
+                    svg
+                        .append("text")
+                        .attr("x", padding + 7) //padding + 7
+                        .attr("y", padding)
+                        .attr("dy", ".31em")
+                        .style("fill", "blue")
+                        .text(function (nodo) { return nodo.ip; });
+                    return svg;
+                };                 
                 
             };
         };
@@ -145,6 +154,19 @@ function Enlaces(nodos) {
     return enlaces;
 }
 
+function setColor(nodo) {
+    if (nodo.activo && nodo.encendido) {
+        return "green";
+    }
+    else if (nodo.activo) {
+        return "yellow";
+    }
+    else {
+        return "red";
+    }
+}
+
+
 function IniciarSignalR()
 {
     //var transportType = signalR.TransportType.WebSockets;
@@ -160,11 +182,25 @@ function IniciarSignalR()
 
     //Metodo llamado desde el hub Notificacion a traves del controller
     notificador.on('Send', (message) => {
-        console.log('Mensaje recibido: '+ message);
+        console.log('Mensaje recibido: ' + message);
+        AgregarNotificacion(message);
     });
     
     notificador.start().catch(err => {
         console.log('connection error');
     });
 
+}
+
+function AgregarNotificacion(mensaje) {
+    var mensajeJson = $.parseJSON(mensaje);
+    ActualizarNodo(mensajeJson);
+    var fecha = new Date();
+    var hora = ('0' + fecha.getHours()).slice(-2) + ":" + ('0' + fecha.getMinutes()).slice(-2);
+    var descripcion = mensajeJson.encendido ? "Luz Encendida" : "Luz Apagada";
+    $(".notificacion-panel").append("<li>" + hora + " - " + mensajeJson.ip + " - "+descripcion+"</li>");
+}
+
+function ActualizarNodo(nodo) {
+    $(".marker circle[id='id" + nodo.ip + "']").attr("fill", setColor(nodo))
 }

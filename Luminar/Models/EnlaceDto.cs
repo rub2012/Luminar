@@ -11,6 +11,7 @@ namespace Luminar.Models
         public int Costo { get; set; }
         public decimal Latitud { get; set; }
         public decimal Longitud { get; set; }
+        public string Ip { get; set; }
 
     }
 }
