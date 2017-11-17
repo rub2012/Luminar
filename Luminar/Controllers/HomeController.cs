@@ -109,8 +109,7 @@ namespace Luminar.Controllers
         {
             try
             {
-                //return EjecutarComando("python3 /home/pi/scripts/leerEstadoLampara.py", ip, 22, "pi", "root") == "1";
-                return true;
+                return EjecutarComando("python3 /home/pi/scripts/leerEstadoLampara.py", ip, 22, "pi", "root") == "1";
             }
             catch (Exception)
             {
@@ -122,6 +121,7 @@ namespace Luminar.Controllers
         {
             using (var client = new SshClient(host, port, user, password))
             {
+                client.ConnectionInfo.Timeout = TimeSpan.FromSeconds(2);
                 client.Connect();
                 var output = client.RunCommand(comando);
                 client.Disconnect();
