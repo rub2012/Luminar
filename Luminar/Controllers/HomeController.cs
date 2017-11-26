@@ -10,6 +10,7 @@ using Newtonsoft.Json;
 using System.IO;
 using System.Collections;
 using Renci.SshNet;
+using System.Net;
 
 namespace Luminar.Controllers
 {
@@ -36,8 +37,8 @@ namespace Luminar.Controllers
 
         private IList<NodoDto> GetNodos()
         {
-            return new List<NodoDto> { new NodoDto { Ip = "10.10.5.1", Latitud = -34.522372m, Longitud = -58.701958m },
-                new NodoDto { Ip = "10.10.5.2", Latitud = -34.521736m, Longitud = -58.701305m },
+            return new List<NodoDto> { new NodoDto { Ip = "192.168.1.100", Latitud = -34.522372m, Longitud = -58.701958m },
+                new NodoDto { Ip = "192.168.1.52", Latitud = -34.521736m, Longitud = -58.701305m },
                 new NodoDto { Ip = "10.10.5.3", Latitud = -34.521391m, Longitud = -58.703140m },
                 new NodoDto { Ip = "10.10.5.4", Latitud = -34.520759m, Longitud = -58.702437m },
                 new NodoDto { Ip = "10.10.5.5", Latitud = -34.520140m, Longitud = -58.701707m },
@@ -48,7 +49,8 @@ namespace Luminar.Controllers
         {
             var nodos = GetNodos();
             var nodosActivos = new List<EnlaceDto>();
-            var red = (Dictionary<string, object>)NetJSON.NetJSON.DeserializeObject(new StreamReader("wwwroot/Data/nodos.json").ReadToEnd());
+            //var red = (Dictionary<string, object>)NetJSON.NetJSON.DeserializeObject(new StreamReader("wwwroot/Data/nodos.json").ReadToEnd());
+            var red = (Dictionary<string, object>)NetJSON.NetJSON.DeserializeObject(GetNodosDataOlsr(nodos.FirstOrDefault().Ip));
             var coleccion = (IList<dynamic>)red["collection"];
             var nodosJson = (IList<dynamic>)coleccion.Where(x => x["topology_id"] == "ipv4_0").Select(x => x["nodes"]).FirstOrDefault();
             nodosJson = nodosJson.Where(x => (x["properties"]["type"] == "local" || x["properties"]["type"] == "node")).ToList();
@@ -126,6 +128,26 @@ namespace Luminar.Controllers
                 var output = client.RunCommand(comando);
                 client.Disconnect();
                 return output.Result;
+            }
+        }
+
+        private string GetNodosDataOlsr(string ip)
+        {
+            try
+            {
+                var url = "http://" + ip + ":1980/telnet/netjsoninfo%20graph";
+                WebRequest request = WebRequest.Create(url);
+                WebResponse response = request.GetResponse();
+                Stream dataStream = response.GetResponseStream();
+                StreamReader reader = new StreamReader(dataStream);
+                var nodosJson = reader.ReadToEnd();
+                reader.Close();
+                response.Close();
+                return nodosJson;
+            }
+            catch (Exception ex)
+            {
+                return "Error: " + ex.Message;
             }
         }
     }

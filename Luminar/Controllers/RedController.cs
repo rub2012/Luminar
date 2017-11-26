@@ -18,17 +18,6 @@ namespace Luminar.Controllers
             return View("Grafico",null);
         }
 
-        private string EjecutarComando(string comando,string host,int port,string user,string password)
-        {
-            using (var client = new SshClient(host, port, user, password))
-            {
-                client.Connect();
-                var output = client.RunCommand(comando);
-                client.Disconnect();
-                return output.Result;
-            }
-        }
-
         [HttpGet]
         public IActionResult Send(string mensaje)
         {
